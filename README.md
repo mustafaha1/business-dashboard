@@ -401,4 +401,4 @@ This project is open source. Feel free to modify and distribute as needed.
 
 **Need Help?** Check the documentation files or open an issue.
 
-**Happy Business Managing! 🚀**
+**Happy Business Managing! 🚀**"# business-dashboard" 
