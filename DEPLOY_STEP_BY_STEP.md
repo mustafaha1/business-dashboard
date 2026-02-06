@@ -259,7 +259,7 @@ git commit -m "First commit"
 
 **Step 3.4 - Connect to GitHub:**
 ```bash
-git remote add origin https://github.com/YOUR_USERNAME/business-dashboard.git
+git remote add origin https://github.com/mustafaha1/business-dashboard.git
 ```
 **Replace YOUR_USERNAME with your actual GitHub username**
 
