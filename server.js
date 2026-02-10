@@ -314,54 +314,6 @@ app.post('/api/auth/change-password',
         });
     }
 );
-// ==================== TEMPORARY SETUP ROUTE ====================
-// REMOVE THIS AFTER CREATING ADMIN!
-
-app.get('/api/setup-create-admin', async (req, res) => {
-    const bcrypt = require('bcryptjs');
-    
-    // Check if admin already exists
-    db.get('SELECT id FROM users WHERE username = ?', ['admin'], async (err, row) => {
-        if (err) {
-            return res.status(500).json({ error: 'Database error', details: err.message });
-        }
-        
-        if (row) {
-            return res.json({ 
-                message: 'Admin already exists!', 
-                username: 'admin',
-                note: 'Use existing credentials to login'
-            });
-        }
-        
-        // Create admin with password 'admin123'
-        const hash = await bcrypt.hash('admin123', 12);
-        
-        db.run(
-            'INSERT INTO users (username, email, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?)',
-            ['admin', 'admin@business.com', hash, 'admin', 1],
-            function(err) {
-                if (err) {
-                    return res.status(500).json({ 
-                        error: 'Failed to create admin', 
-                        details: err.message 
-                    });
-                }
-                
-                res.json({
-                    message: '✅ Admin created successfully!',
-                    username: 'admin',
-                    password: 'admin123',
-                    note: 'DELETE THIS ROUTE FROM server.js AFTER USING!',
-                    loginUrl: '/login'
-                });
-            }
-        );
-    });
-});
-
-// ==================== END TEMPORARY SETUP ====================
-
 // Logout (client-side token removal, but we can track it server-side if needed)
 app.post('/api/auth/logout', authenticateToken, (req, res) => {
     // In a more advanced setup, you might add the token to a blacklist
