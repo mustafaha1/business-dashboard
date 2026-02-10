@@ -315,24 +315,7 @@ app.post('/api/auth/change-password',
     }
 );
 
-// TEMPORARY: Recreate admin
-app.get('/api/setup-recreate-admin', async (req, res) => {
-    const bcrypt = require('bcryptjs');
-    const hash = await bcrypt.hash('admin123', 12);
-    
-    // Delete existing admin if exists
-    db.run('DELETE FROM users WHERE username = ?', ['admin'], function() {
-        // Create new admin
-        db.run(
-            'INSERT INTO users (username, email, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?)',
-            ['admin', 'admin@business.com', hash, 'admin', 1],
-            function(err) {
-                if (err) return res.status(500).json({error: err.message});
-                res.json({message: 'Admin recreated', username: 'admin', password: 'admin123'});
-            }
-        );
-    });
-});
+
 // Logout (client-side token removal, but we can track it server-side if needed)
 app.post('/api/auth/logout', authenticateToken, (req, res) => {
     // In a more advanced setup, you might add the token to a blacklist
