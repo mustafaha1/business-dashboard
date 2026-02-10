@@ -64,6 +64,52 @@ const db = new sqlite3.Database(dbPath, (err) => {
 // Enable foreign key constraints
 db.run('PRAGMA foreign_keys = ON');
 
+// tis is where i added the code later 
+// ==================== AUTO-CREATE ADMIN ON FIRST STARTUP ====================
+
+function ensureAdminExists() {
+    const bcrypt = require('bcryptjs');
+    
+    db.get('SELECT id FROM users WHERE role = ?', ['admin'], async (err, row) => {
+        if (err) {
+            console.error('Error checking for admin:', err.message);
+            return;
+        }
+        
+        // If no admin exists, create one
+        if (!row) {
+            console.log('⚠️  No admin found. Creating default admin...');
+            
+            try {
+                const hash = await bcrypt.hash('admin123', 12);
+                
+                db.run(
+                    'INSERT INTO users (username, email, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?)',
+                    ['admin', 'admin@business.com', hash, 'admin', 1],
+                    function(err) {
+                        if (err) {
+                            console.error('❌ Error creating admin:', err.message);
+                        } else {
+                            console.log('✅ Default admin created:');
+                            console.log('   Username: admin');
+                            console.log('   Password: admin123');
+                            console.log('   ⚠️  Please change this password after first login!');
+                        }
+                    }
+                );
+            } catch (error) {
+                console.error('❌ Error hashing password:', error);
+            }
+        } else {
+            console.log('✅ Admin user exists');
+        }
+    });
+}
+
+// Call this function when server starts
+ensureAdminExists();
+
+// ==================== END AUTO-CREATE ADMIN ====================
 // ==================== MIDDLEWARE ====================
 
 // Security headers
